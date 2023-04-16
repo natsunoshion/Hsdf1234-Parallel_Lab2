@@ -35,24 +35,44 @@ void solve() {
             E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-5));
         }
         vector<pair<int, int>> records;
-        // 遍历被消元行
-        for (int i=0; i<5; i++) {
-            // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
-            // 遍历消元子的行
-            for (int j=0; j<5; j++) {
-                while (lp(E_temp[i]) == j) {
-                    E_temp[i] ^= R_temp[j];
-                    records.emplace_back(i, j+n-4);
+        // 记录这5列的消元操作
+        while (true) {
+            bool is_end = 1;
+            for (int i=0; i<MAXN; i++) {
+                if (lp(E_temp[i] >= n-4)) {
+                    is_end = 0;
+                    break;
+                }
+            }
+            if (is_end) {
+                break;
+            }
+            // 遍历被消元行
+            for (int i=0; i<5; i++) {
+                bool is_eliminated = 0;
+                // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
+                // 遍历消元子的行
+                for (int j=0; j<5; j++) {
+                    if (lp(E_temp[i]) == j) {
+                        E_temp[i] ^= R_temp[j];
+                        is_eliminated = 1;
+                        records.emplace_back(i, j+n-4);  // 记录
+                    }
+                }
+                if (!is_eliminated) {
+                    // 升格
+                    R[lp(E_temp[i])] = E[i];
+                    break;
                 }
             }
         }
-        // 接下来，对剩余n-4列进行并行计算，按照records中的记录进行多线程操作
+        // 接下来，对这n列进行并行计算，按照records中的记录进行多线程操作（由于刚刚没有存回去，所以这里剩下有n列）
         // 每4段一组进行并行化，不断从records中取列
         for (auto pair : records) {
             int row = pair.first;
             int leader = pair.second;
-            int m = n - 5;
-            while (m >= 20) {
+            int m;
+            for (m=n; m>=19; m-=20) {
                 // 被消元行
                 bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
                 bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
@@ -78,11 +98,64 @@ void solve() {
                 uint32x4_t vb = vld1q_u32(arr_b);
                 va = veroq_u32(va, vb);  // 异或
                 vst1q_u32(arr_a, va);
-                /* store */
-                m -= 5;
+                // 存储回被消元行的位图，按arr_a[i]的5个位进行置位操作
+                // 外层循环遍历arr_a数组，内存循环遍历arr_a[i]的位数
+                for (int i=0; i<4; i++) {
+                    for (int j=0; j<5; j++) {
+                        E[row].set(m-j, arr_a[i] & 0x1);
+                        arr_a[i] >>= 1;
+                    }
+                }
+            }
+            // 剩下的直接一个一个异或就可以了，使用掩码
+            for (; m>=0; m--) {
+                std::bitset<MAXN> mask;
+                mask.reset();
+                mask.set(m, 1);
+                E[row] ^= (R[leader]&mask);
             }
         }
         n -= 5;
+    }
+    // 最后，n不到5了，也不用记录了
+    bitset<5> R_temp[MAXM];
+    bitset<5> E_temp[MAXM];
+    for (int i=0; i<MAXM; i++) {
+        R_temp[i] = bitset<5>((R[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
+        E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
+    }
+    while (true) {
+        bool is_end = 1;
+        for (int i=0; i<MAXM; i++) {
+            if (lp(E_temp[i]) >= 0) {
+                is_end = 0;
+                break;
+            }
+        }
+        if (is_end) {
+            break;
+        }
+        // 遍历被消元行
+        for (int i=0; i<5; i++) {
+            bool is_eliminated = 0;
+            // 遍历消元子的行
+            for (int j=0; j<5; j++) {
+                if (lp(E_temp[i]) == j) {
+                    E_temp[i] ^= R_temp[j];
+                    is_eliminated = 1;
+                }
+            }
+            if (!is_eliminated) {
+                R[lp(E_temp[i])] = E[i];
+                break;
+            }
+        }
+    }
+    // 存储回去
+    for (int i=0; i<MAXM; i++) {
+        for (int j=0; j<n+1; j++) {
+            E[i].set(j, E_temp[i][j]);
+        }
     }
 }
 
