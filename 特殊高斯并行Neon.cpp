@@ -1,0 +1,156 @@
+#include <bits/stdc++.h>
+// #include <arm_neon.h>
+
+using namespace std;
+
+// MAXM:最大行数，MAXN：列数
+const int MAXM = 10000;
+const int MAXN = 8399;
+
+// 使用bitset进行存储，R：消元子，E：被消元行
+bitset<MAXN> R[MAXM];
+bitset<MAXN> E[MAXM];
+
+// 被消元行行数
+int m = 4535;
+
+// 找到当前被消元行的首项
+int lp(bitset<5> temp) {
+    int k = 4;
+    while (temp[k]==0 && k>=0) {
+        k--;
+    }
+}
+
+// 特殊高斯消去法并行Neon实现，假设每一轮取5列消元子/被消元行出来
+void solve() {
+    int n = MAXN - 1;
+    while (n >= 4) {
+        // 每一轮计算n~n-4这5列的消元子，也就是min_R = n-4, max_R = n
+        // 使用位运算，先左移MAXN-n-1位让所需要的5位变为最高位，然后再右移MAXN-5位，清除掉低位
+        bitset<5> R_temp[MAXM];
+        bitset<5> E_temp[MAXM];
+        for (int i=0; i<MAXM; i++) {
+            R_temp[i] = bitset<5>((R[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-5));
+            E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-5));
+        }
+        vector<pair<int, int>> records;
+        // 遍历被消元行
+        for (int i=0; i<5; i++) {
+            // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
+            // 遍历消元子的行
+            for (int j=0; j<5; j++) {
+                while (lp(E_temp[i]) == j) {
+                    E_temp[i] ^= R_temp[j];
+                    records.emplace_back(i, j+n-4);
+                }
+            }
+        }
+        // 接下来，对剩余n-4列进行并行计算，按照records中的记录进行多线程操作
+        // 每4段一组进行并行化，不断从records中取列
+        for (auto pair : records) {
+            int row = pair.first;
+            int leader = pair.second;
+            int m = n - 5;
+            while (m >= 20) {
+                // 被消元行
+                bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
+                bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
+                bitset<5> a3_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
+                bitset<5> a4_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                // 消元子
+                bitset<5> b1_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
+                bitset<5> b2_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
+                bitset<5> b3_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
+                bitset<5> b4_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                // 形成整数，构成neon向量
+                int a1 = a1_bit.to_ulong();
+                int a2 = a2_bit.to_ulong();
+                int a3 = a3_bit.to_ulong();
+                int a4 = a4_bit.to_ulong();
+                int b1 = b1_bit.to_ulong();
+                int b2 = b2_bit.to_ulong();
+                int b3 = b3_bit.to_ulong();
+                int b4 = b4_bit.to_ulong();
+                int arr_a[4] = {a1, a2, a3, a4};
+                int arr_b[4] = {b1, b2, b3, b4};
+                uint32x4_t va = vld1q_u32(arr_1);
+                uint32x4_t vb = vld1q_u32(arr_b);
+                va = veroq_u32(va, vb);  // 异或
+                vst1q_u32(arr_a, va);
+                /* store */
+                m -= 5;
+            }
+        }
+        n -= 5;
+    }
+}
+
+int main() {
+    // 读入消元子
+    ifstream file_R;
+    char buffer[10000] = {0};
+    // file_R.open("/home/data/Groebner/测试样例1 矩阵列数130，非零消元子22，被消元行8/消元子.txt");
+    file_R.open("R.txt");
+    if (file_R.fail()) {
+        cout << "wow" << endl;
+    }
+    while (file_R.getline(buffer, sizeof(buffer))) {
+        // 每一次读入一行，消元子每32位记录进一个int中
+        int bit;
+        stringstream line(buffer);
+        int first_in = 1;
+
+        // 消元子的索引是其首项
+        int index;
+        while (line >> bit) {
+            if (first_in) {
+                first_in = 0;
+                index = bit;
+            }
+
+            // 将第index行的消元子bitset对应位 置1
+            R[index][bit] = 1;
+        }
+    }
+    file_R.close();
+//--------------------------------
+    // 读入被消元行
+    ifstream file_E;
+    // file_E.open("/home/data/Groebner/测试样例1 矩阵列数130，非零消元子22，被消元行8/被消元行.txt");
+    file_E.open("E.txt");
+
+    // 被消元行的索引就是读入的行数
+    int index = 0;
+    while (file_E.getline(buffer, sizeof(buffer))) {
+        // 每一次读入一行，消元子每32位记录进一个int中
+        int bit;
+        stringstream line(buffer);
+        while (line >> bit) {
+            // 将第index行的消元子bitset对应位 置1
+            E[index][bit] = 1;
+        }
+        index++;
+    }
+//--------------------------------
+    // 使用C++11的chrono库来计时
+    auto start = chrono::high_resolution_clock::now();
+    solve();
+    auto end = chrono::high_resolution_clock::now();
+    auto diff = chrono::duration_cast<chrono::duration<double, milli>>(end - start);
+    cout << diff.count() << "ms" << endl;
+//--------------------------------
+    // // 验证结果正确性
+    // for (int i=0; i<1000; i++) {
+    //     if (!E[i].none()) {
+    //         // cout << i << ':';
+    //         for (int j=129; j>=0; j--) {
+    //             if (E[i][j] == 1) {
+    //                 cout << j << ' ';
+    //             }
+    //         }
+    //         cout << endl;
+    //     }
+    // }
+    return 0;
+}

@@ -1,18 +1,17 @@
-#include <bits/stdc++.h>  // 使用万能头文件stdc++.h，注意，有的IDE可能不支持
-#include "random.h"  // 使用自制的随机库
+#include <bits/stdc++.h>
 
 using namespace std;
 
 // MAXM:最大行数，MAXN：列数
 const int MAXM = 10000;
-const int MAXN = 8399;
+const int MAXN = 3799;
 
 // 使用bitset进行存储，R：消元子，E：被消元行
 bitset<MAXN> R[MAXM];
 bitset<MAXN> E[MAXM];
 
 // 被消元行行数
-int m = 4535;
+int m = 1953;
 
 // 特殊高斯消去法串行实现
 void solve() {
