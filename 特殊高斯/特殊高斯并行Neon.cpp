@@ -5,14 +5,14 @@ using namespace std;
 
 // MAXM:最大行数，MAXN：列数
 const int MAXM = 10000;
-const int MAXN = 8399;
+const int MAXN = 3799;
 
 // 使用bitset进行存储，R：消元子，E：被消元行
 bitset<MAXN> R[MAXM];
 bitset<MAXN> E[MAXM];
 
 // 被消元行行数
-int m = 4535;
+int m = 1953;
 
 // 找到当前被消元行的首项
 int lp(bitset<5> temp) {
@@ -75,19 +75,19 @@ void solve() {
                 bitset<5> b3_bit = bitset<5>(((R[leader]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> b4_bit = bitset<5>(((R[leader]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
                 // 形成整数，构成neon向量
-                int a1 = a1_bit.to_ulong();
-                int a2 = a2_bit.to_ulong();
-                int a3 = a3_bit.to_ulong();
-                int a4 = a4_bit.to_ulong();
-                int b1 = b1_bit.to_ulong();
-                int b2 = b2_bit.to_ulong();
-                int b3 = b3_bit.to_ulong();
-                int b4 = b4_bit.to_ulong();
-                int arr_a[4] = {a1, a2, a3, a4};
-                int arr_b[4] = {b1, b2, b3, b4};
+                uint a1 = a1_bit.to_ulong();
+                uint a2 = a2_bit.to_ulong();
+                uint a3 = a3_bit.to_ulong();
+                uint a4 = a4_bit.to_ulong();
+                uint b1 = b1_bit.to_ulong();
+                uint b2 = b2_bit.to_ulong();
+                uint b3 = b3_bit.to_ulong();
+                uint b4 = b4_bit.to_ulong();
+                uint arr_a[4] = {a1, a2, a3, a4};
+                uint arr_b[4] = {b1, b2, b3, b4};
                 uint32x4_t va = vld1q_u32(arr_a);
                 uint32x4_t vb = vld1q_u32(arr_b);
-                va = veroq_u32(va, vb);  // 异或
+                va = veorq_u32(va, vb);  // 异或
                 vst1q_u32(arr_a, va);
                 // 存储回被消元行的位图，按arr_a[i]的5个位进行置位操作
                 // 外层循环遍历arr_a数组，内存循环遍历arr_a[i]的位数
@@ -146,8 +146,8 @@ int main() {
     // 读入消元子
     ifstream file_R;
     char buffer[10000] = {0};
-    // file_R.open("/home/data/Groebner/测试样例1 矩阵列数130，非零消元子22，被消元行8/消元子.txt");
-    file_R.open("R.txt");
+    file_R.open("/home/data/Groebner/6_3799_2759_1953/1.txt");
+    // file_R.open("R.txt");
     if (file_R.fail()) {
         cout << "wow" << endl;
     }
@@ -173,8 +173,8 @@ int main() {
 //--------------------------------
     // 读入被消元行
     ifstream file_E;
-    // file_E.open("/home/data/Groebner/测试样例1 矩阵列数130，非零消元子22，被消元行8/被消元行.txt");
-    file_E.open("E.txt");
+    file_E.open("/home/data/Groebner/6_3799_2759_1953/2.txt");
+    // file_E.open("E.txt");
 
     // 被消元行的索引就是读入的行数
     int index = 0;
