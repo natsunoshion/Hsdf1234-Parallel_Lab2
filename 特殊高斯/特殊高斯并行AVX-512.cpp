@@ -20,6 +20,7 @@ int lp(bitset<5> temp) {
     while (temp[k]==0 && k>=0) {
         k--;
     }
+    return k;
 }
 
 // 特殊高斯消去法并行Neon实现，假设每一轮取5列消元子/被消元行出来
@@ -74,39 +75,39 @@ void solve() {
             int m;
             for (m=n; m>=79; m-=80) {
                 // 被消元行
-                bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
-                bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
-                bitset<5> a3_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
-                bitset<5> a4_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
-                bitset<5> a5_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
-                bitset<5> a6_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
-                bitset<5> a7_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
-                bitset<5> a8_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
-                bitset<5> a9_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-40)-1)) >> (MAXN-5));
-                bitset<5> a10_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-45)-1)) >> (MAXN-5));
-                bitset<5> a11_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-50)-1)) >> (MAXN-5));
-                bitset<5> a12_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-55)-1)) >> (MAXN-5));
-                bitset<5> a13_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-60)-1)) >> (MAXN-5));
-                bitset<5> a14_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-65)-1)) >> (MAXN-5));
-                bitset<5> a15_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-70)-1)) >> (MAXN-5));
-                bitset<5> a16_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-75)-1)) >> (MAXN-5));
+                bitset<5> a1_bit = bitset<5>(((E[row]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a2_bit = bitset<5>(((E[row]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a3_bit = bitset<5>(((E[row]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a4_bit = bitset<5>(((E[row]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a5_bit = bitset<5>(((E[row]<<(MAXN-(m-20)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a6_bit = bitset<5>(((E[row]<<(MAXN-(m-25)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a7_bit = bitset<5>(((E[row]<<(MAXN-(m-30)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a8_bit = bitset<5>(((E[row]<<(MAXN-(m-35)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a9_bit = bitset<5>(((E[row]<<(MAXN-(m-40)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a10_bit = bitset<5>(((E[row]<<(MAXN-(m-45)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a11_bit = bitset<5>(((E[row]<<(MAXN-(m-50)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a12_bit = bitset<5>(((E[row]<<(MAXN-(m-55)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a13_bit = bitset<5>(((E[row]<<(MAXN-(m-60)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a14_bit = bitset<5>(((E[row]<<(MAXN-(m-65)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a15_bit = bitset<5>(((E[row]<<(MAXN-(m-70)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a16_bit = bitset<5>(((E[row]<<(MAXN-(m-75)-1)) >> (MAXN-5)).to_ulong());
                 // 消元子
-                bitset<5> b1_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
-                bitset<5> b2_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
-                bitset<5> b3_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
-                bitset<5> b4_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
-                bitset<5> b5_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
-                bitset<5> b6_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
-                bitset<5> b7_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
-                bitset<5> b8_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
-                bitset<5> b9_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-40)-1)) >> (MAXN-5));
-                bitset<5> b10_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-45)-1)) >> (MAXN-5));
-                bitset<5> b11_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-50)-1)) >> (MAXN-5));
-                bitset<5> b12_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-55)-1)) >> (MAXN-5));
-                bitset<5> b13_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-60)-1)) >> (MAXN-5));
-                bitset<5> b14_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-65)-1)) >> (MAXN-5));
-                bitset<5> b15_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-70)-1)) >> (MAXN-5));
-                bitset<5> b16_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-75)-1)) >> (MAXN-5));
+                bitset<5> b1_bit = bitset<5>(((R[leader]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b2_bit = bitset<5>(((R[leader]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b3_bit = bitset<5>(((R[leader]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b4_bit = bitset<5>(((R[leader]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b5_bit = bitset<5>(((R[leader]<<(MAXN-(m-20)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b6_bit = bitset<5>(((R[leader]<<(MAXN-(m-25)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b7_bit = bitset<5>(((R[leader]<<(MAXN-(m-30)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b8_bit = bitset<5>(((R[leader]<<(MAXN-(m-35)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b9_bit = bitset<5>(((R[leader]<<(MAXN-(m-40)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b10_bit = bitset<5>(((R[leader]<<(MAXN-(m-45)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b11_bit = bitset<5>(((R[leader]<<(MAXN-(m-50)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b12_bit = bitset<5>(((R[leader]<<(MAXN-(m-55)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b13_bit = bitset<5>(((R[leader]<<(MAXN-(m-60)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b14_bit = bitset<5>(((R[leader]<<(MAXN-(m-65)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b15_bit = bitset<5>(((R[leader]<<(MAXN-(m-70)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b16_bit = bitset<5>(((R[leader]<<(MAXN-(m-75)-1)) >> (MAXN-5)).to_ulong());
                 // 形成整数，构成neon向量
                 int a1 = a1_bit.to_ulong();
                 int a2 = a2_bit.to_ulong();

@@ -20,6 +20,7 @@ int lp(bitset<5> temp) {
     while (temp[k]==0 && k>=0) {
         k--;
     }
+    return k;
 }
 
 // 特殊高斯消去法并行Neon实现，假设每一轮取5列消元子/被消元行出来
@@ -31,8 +32,8 @@ void solve() {
         bitset<5> R_temp[MAXM];
         bitset<5> E_temp[MAXM];
         for (int i=0; i<MAXM; i++) {
-            R_temp[i] = bitset<5>((R[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-5));
-            E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-5));
+            R_temp[i] = bitset<5>(((R[i]<<(MAXN-n-1)) >> (MAXN-5)).to_ulong());
+            E_temp[i] = bitset<5>(((E[i]<<(MAXN-n-1)) >> (MAXN-5)).to_ulong());
         }
         vector<pair<int, int>> records;
         // 记录这5列的消元操作
@@ -74,15 +75,15 @@ void solve() {
             int m;
             for (m=n; m>=19; m-=20) {
                 // 被消元行
-                bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
-                bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
-                bitset<5> a3_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
-                bitset<5> a4_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> a1_bit = bitset<5>(((E[row]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a2_bit = bitset<5>(((E[row]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a3_bit = bitset<5>(((E[row]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> a4_bit = bitset<5>(((E[row]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
                 // 消元子
-                bitset<5> b1_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
-                bitset<5> b2_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
-                bitset<5> b3_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
-                bitset<5> b4_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> b1_bit = bitset<5>(((R[leader]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b2_bit = bitset<5>(((R[leader]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b3_bit = bitset<5>(((R[leader]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
+                bitset<5> b4_bit = bitset<5>(((R[leader]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
                 // 形成整数，构成neon向量
                 int a1 = a1_bit.to_ulong();
                 int a2 = a2_bit.to_ulong();
