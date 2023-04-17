@@ -3,18 +3,18 @@
 
 using namespace std;
 
-// MAXM:æœ€å¤§è¡Œæ•°ï¼ŒMAXNï¼šåˆ—æ•°
+// MAXM:×î´óĞĞÊı£¬MAXN£ºÁĞÊı
 const int MAXM = 10000;
-const int MAXN = 8399;
+const int MAXN = 3799;
 
-// ä½¿ç”¨bitsetè¿›è¡Œå­˜å‚¨ï¼ŒRï¼šæ¶ˆå…ƒå­ï¼ŒEï¼šè¢«æ¶ˆå…ƒè¡Œ
+// Ê¹ÓÃbitset½øĞĞ´æ´¢£¬R£ºÏûÔª×Ó£¬E£º±»ÏûÔªĞĞ
 bitset<MAXN> R[MAXM];
 bitset<MAXN> E[MAXM];
 
-// è¢«æ¶ˆå…ƒè¡Œè¡Œæ•°
-int m = 4535;
+// ±»ÏûÔªĞĞĞĞÊı
+int m = 1953;
 
-// æ‰¾åˆ°å½“å‰è¢«æ¶ˆå…ƒè¡Œçš„é¦–é¡¹
+// ÕÒµ½µ±Ç°±»ÏûÔªĞĞµÄÊ×Ïî
 int lp(bitset<5> temp) {
     int k = 4;
     while (temp[k]==0 && k>=0) {
@@ -23,12 +23,16 @@ int lp(bitset<5> temp) {
     return k;
 }
 
-// ç‰¹æ®Šé«˜æ–¯æ¶ˆå»æ³•å¹¶è¡ŒNeonå®ç°ï¼Œå‡è®¾æ¯ä¸€è½®å–5åˆ—æ¶ˆå…ƒå­/è¢«æ¶ˆå…ƒè¡Œå‡ºæ¥
+// ÌØÊâ¸ßË¹ÏûÈ¥·¨²¢ĞĞNeonÊµÏÖ£¬¼ÙÉèÃ¿Ò»ÂÖÈ¡5ÁĞÏûÔª×Ó/±»ÏûÔªĞĞ³öÀ´
 void solve() {
     int n = MAXN - 1;
     while (n >= 4) {
-        // æ¯ä¸€è½®è®¡ç®—n~n-4è¿™5åˆ—çš„æ¶ˆå…ƒå­ï¼Œä¹Ÿå°±æ˜¯min_R = n-4, max_R = n
-        // ä½¿ç”¨ä½è¿ç®—ï¼Œå…ˆå·¦ç§»MAXN-n-1ä½è®©æ‰€éœ€è¦çš„5ä½å˜ä¸ºæœ€é«˜ä½ï¼Œç„¶åå†å³ç§»MAXN-5ä½ï¼Œæ¸…é™¤æ‰ä½ä½
+        // cout << "µ±Ç°nÎª" << n << endl;
+        // if (n==8) {
+        //     cout << "start dbg";
+        // }
+        // Ã¿Ò»ÂÖ¼ÆËãn~n-4Õâ5ÁĞµÄÏûÔª×Ó£¬Ò²¾ÍÊÇmin_R = n-4, max_R = n
+        // Ê¹ÓÃÎ»ÔËËã£¬ÏÈ×óÒÆMAXN-n-1Î»ÈÃËùĞèÒªµÄ5Î»±äÎª×î¸ßÎ»£¬È»ºóÔÙÓÒÒÆMAXN-5Î»£¬Çå³ıµôµÍÎ»
         bitset<5> R_temp[MAXM];
         bitset<5> E_temp[MAXM];
         for (int i=0; i<MAXM; i++) {
@@ -36,55 +40,45 @@ void solve() {
             E_temp[i] = bitset<5>(((E[i]<<(MAXN-n-1)) >> (MAXN-5)).to_ulong());
         }
         vector<pair<int, int>> records;
-        // è®°å½•è¿™5åˆ—çš„æ¶ˆå…ƒæ“ä½œ
-        while (true) {
-            bool is_end = 1;
-            for (int i=0; i<MAXN; i++) {
-                if (lp(E_temp[i]) >= n-4) {
-                    is_end = 0;
-                    break;
+        // ¼ÇÂ¼Õâ5ÁĞµÄÏûÔª²Ù×÷
+        // ±éÀú±»ÏûÔªĞĞ
+        for (int i=0; i<5; i++) {
+            bool is_eliminated = 0;
+            // ÏûÔª£¬²¢¼ÇÂ¼²Ù×÷£¬ÕâÀï¼ÇÂ¼Ê¹ÓÃvector<pair<int, int>>´æ´¢£¬µÚÒ»¸öint¼ÇÂ¼±»ÏûÔªĞĞ²Ù×÷µÄĞĞºÅ£¬µÚ¶ş¸öint¼ÇÂ¼Ê×ÏîËùÔÚµÄÁĞºÅ
+            // ±éÀúÏûÔª×ÓµÄĞĞ
+            for (int j=4; j>=0; j--) {
+                if (lp(E_temp[i]) == j) {
+                    E_temp[i] ^= R_temp[j];
+                    is_eliminated = 1;
+                    records.emplace_back(i, j+n-4);  // ¼ÇÂ¼
                 }
             }
-            if (is_end) {
+            if (!is_eliminated) {
+                // ²»Îª¿ÕĞĞÔòÉı¸ñ£¬Îª¿ÕĞĞÔòÉáÈ¥
+                if (!E_temp[i].none()) {
+                    R[lp(E_temp[i])] = E[i];
+                }
                 break;
             }
-            // éå†è¢«æ¶ˆå…ƒè¡Œ
-            for (int i=0; i<5; i++) {
-                bool is_eliminated = 0;
-                // æ¶ˆå…ƒï¼Œå¹¶è®°å½•æ“ä½œï¼Œè¿™é‡Œè®°å½•ä½¿ç”¨vector<pair<int, int>>å­˜å‚¨ï¼Œç¬¬ä¸€ä¸ªintè®°å½•è¢«æ¶ˆå…ƒè¡Œæ“ä½œçš„è¡Œå·ï¼Œç¬¬äºŒä¸ªintè®°å½•é¦–é¡¹æ‰€åœ¨çš„åˆ—å·
-                // éå†æ¶ˆå…ƒå­çš„è¡Œ
-                for (int j=0; j<5; j++) {
-                    if (lp(E_temp[i]) == j) {
-                        E_temp[i] ^= R_temp[j];
-                        is_eliminated = 1;
-                        records.emplace_back(i, j+n-4);  // è®°å½•
-                    }
-                }
-                if (!is_eliminated) {
-                    // å‡æ ¼
-                    R[lp(E_temp[i])] = E[i];
-                    break;
-                }
-            }
         }
-        // æ¥ä¸‹æ¥ï¼Œå¯¹è¿™nåˆ—è¿›è¡Œå¹¶è¡Œè®¡ç®—ï¼ŒæŒ‰ç…§recordsä¸­çš„è®°å½•è¿›è¡Œå¤šçº¿ç¨‹æ“ä½œï¼ˆç”±äºåˆšåˆšæ²¡æœ‰å­˜å›å»ï¼Œæ‰€ä»¥è¿™é‡Œå‰©ä¸‹æœ‰nåˆ—ï¼‰
-        // æ¯4æ®µä¸€ç»„è¿›è¡Œå¹¶è¡ŒåŒ–ï¼Œä¸æ–­ä»recordsä¸­å–åˆ—
+        // ½ÓÏÂÀ´£¬¶ÔÕânÁĞ½øĞĞ²¢ĞĞ¼ÆËã£¬°´ÕÕrecordsÖĞµÄ¼ÇÂ¼½øĞĞ¶àÏß³Ì²Ù×÷£¨ÓÉÓÚ¸Õ¸ÕÃ»ÓĞ´æ»ØÈ¥£¬ËùÒÔÕâÀïÊ£ÏÂÓĞnÁĞ£©
+        // Ã¿4¶ÎÒ»×é½øĞĞ²¢ĞĞ»¯£¬²»¶Ï´ÓrecordsÖĞÈ¡ÁĞ
         for (auto pair : records) {
             int row = pair.first;
             int leader = pair.second;
             int m;
             for (m=n; m>=19; m-=20) {
-                // è¢«æ¶ˆå…ƒè¡Œ
+                // ±»ÏûÔªĞĞ
                 bitset<5> a1_bit = bitset<5>(((E[row]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> a2_bit = bitset<5>(((E[row]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> a3_bit = bitset<5>(((E[row]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> a4_bit = bitset<5>(((E[row]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
-                // æ¶ˆå…ƒå­
+                // ÏûÔª×Ó
                 bitset<5> b1_bit = bitset<5>(((R[leader]<<(MAXN-m-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> b2_bit = bitset<5>(((R[leader]<<(MAXN-(m-5)-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> b3_bit = bitset<5>(((R[leader]<<(MAXN-(m-10)-1)) >> (MAXN-5)).to_ulong());
                 bitset<5> b4_bit = bitset<5>(((R[leader]<<(MAXN-(m-15)-1)) >> (MAXN-5)).to_ulong());
-                // å½¢æˆæ•´æ•°ï¼Œæ„æˆneonå‘é‡
+                // ĞÎ³ÉÕûÊı£¬¹¹³ÉneonÏòÁ¿
                 int a1 = a1_bit.to_ulong();
                 int a2 = a2_bit.to_ulong();
                 int a3 = a3_bit.to_ulong();
@@ -97,10 +91,10 @@ void solve() {
                 int arr_b[4] = {b1, b2, b3, b4};
                 __m128i_u va = _mm_set_epi32(a4, a3, a2, a1);
                 __m128i_u vb = _mm_set_epi32(b4, b3, b2, b1);
-                va = _mm_xor_si128(va, vb);  // å¼‚æˆ–
-                _mm_storeu_si128((__m128i*)arr_a, va);  // å­˜å›å»
-                // å­˜å‚¨å›è¢«æ¶ˆå…ƒè¡Œçš„ä½å›¾ï¼ŒæŒ‰arr_a[i]çš„5ä¸ªä½è¿›è¡Œç½®ä½æ“ä½œ
-                // å¤–å±‚å¾ªç¯éå†arr_aæ•°ç»„ï¼Œå†…å­˜å¾ªç¯éå†arr_a[i]çš„ä½æ•°
+                va = _mm_xor_si128(va, vb);  // Òì»ò
+                _mm_storeu_si128((__m128i*)arr_a, va);  // ´æ»ØÈ¥
+                // ´æ´¢»Ø±»ÏûÔªĞĞµÄÎ»Í¼£¬°´arr_a[i]µÄ5¸öÎ»½øĞĞÖÃÎ»²Ù×÷
+                // Íâ²ãÑ­»·±éÀúarr_aÊı×é£¬ÄÚ´æÑ­»·±éÀúarr_a[i]µÄÎ»Êı
                 for (int i=0; i<4; i++) {
                     for (int j=0; j<5; j++) {
                         E[row].set(m-j, arr_a[i] & 0x1);
@@ -108,7 +102,7 @@ void solve() {
                     }
                 }
             }
-            // å‰©ä¸‹çš„ç›´æ¥ä¸€ä¸ªä¸€ä¸ªå¼‚æˆ–å°±å¯ä»¥äº†ï¼Œä½¿ç”¨æ©ç 
+            // Ê£ÏÂµÄÖ±½ÓÒ»¸öÒ»¸öÒì»ò¾Í¿ÉÒÔÁË£¬Ê¹ÓÃÑÚÂë
             for (; m>=0; m--) {
                 std::bitset<MAXN> mask;
                 mask.reset();
@@ -118,41 +112,33 @@ void solve() {
         }
         n -= 5;
     }
-    // æœ€åï¼Œnä¸åˆ°5äº†ï¼Œä¹Ÿä¸ç”¨è®°å½•äº†
+    // ×îºó£¬n²»µ½5ÁË£¬Ò²²»ÓÃ¼ÇÂ¼ÁË
     bitset<5> R_temp[MAXM];
     bitset<5> E_temp[MAXM];
     for (int i=0; i<MAXM; i++) {
-        R_temp[i] = bitset<5>((R[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
-        E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
+        R_temp[i] = bitset<5>(((R[i]<<(MAXN-n-1)) >> (MAXN-n-1)).to_ulong());
+        E_temp[i] = bitset<5>(((E[i]<<(MAXN-n-1)) >> (MAXN-n-1)).to_ulong());
     }
-    while (true) {
-        bool is_end = 1;
-        for (int i=0; i<MAXM; i++) {
-            if (lp(E_temp[i]) >= 0) {
-                is_end = 0;
-                break;
+    // ±éÀú±»ÏûÔªĞĞ
+    for (int i=0; i<5; i++) {
+        bool is_eliminated = 0;
+        // ÏûÔª£¬²¢¼ÇÂ¼²Ù×÷£¬ÕâÀï¼ÇÂ¼Ê¹ÓÃvector<pair<int, int>>´æ´¢£¬µÚÒ»¸öint¼ÇÂ¼±»ÏûÔªĞĞ²Ù×÷µÄĞĞºÅ£¬µÚ¶ş¸öint¼ÇÂ¼Ê×ÏîËùÔÚµÄÁĞºÅ
+        // ±éÀúÏûÔª×ÓµÄĞĞ
+        for (int j=4; j>=0; j--) {
+            if (lp(E_temp[i]) == j) {
+                E_temp[i] ^= R_temp[j];
+                is_eliminated = 1;
             }
         }
-        if (is_end) {
+        if (!is_eliminated) {
+            // ²»Îª¿ÕĞĞÔòÉı¸ñ£¬Îª¿ÕĞĞÔòÉáÈ¥
+            if (!E_temp[i].none()) {
+                R[lp(E_temp[i])] = E[i];
+            }
             break;
         }
-        // éå†è¢«æ¶ˆå…ƒè¡Œ
-        for (int i=0; i<5; i++) {
-            bool is_eliminated = 0;
-            // éå†æ¶ˆå…ƒå­çš„è¡Œ
-            for (int j=0; j<5; j++) {
-                if (lp(E_temp[i]) == j) {
-                    E_temp[i] ^= R_temp[j];
-                    is_eliminated = 1;
-                }
-            }
-            if (!is_eliminated) {
-                R[lp(E_temp[i])] = E[i];
-                break;
-            }
-        }
     }
-    // å­˜å‚¨å›å»
+    // ´æ´¢»ØÈ¥
     for (int i=0; i<MAXM; i++) {
         for (int j=0; j<n+1; j++) {
             E[i].set(j, E_temp[i][j]);
@@ -161,21 +147,21 @@ void solve() {
 }
 
 int main() {
-    // è¯»å…¥æ¶ˆå…ƒå­
+    // ¶ÁÈëÏûÔª×Ó
     ifstream file_R;
     char buffer[10000] = {0};
-    // file_R.open("/home/data/Groebner/æµ‹è¯•æ ·ä¾‹1 çŸ©é˜µåˆ—æ•°130ï¼Œéé›¶æ¶ˆå…ƒå­22ï¼Œè¢«æ¶ˆå…ƒè¡Œ8/æ¶ˆå…ƒå­.txt");
+    // file_R.open("/home/data/Groebner/²âÊÔÑùÀı1 ¾ØÕóÁĞÊı130£¬·ÇÁãÏûÔª×Ó22£¬±»ÏûÔªĞĞ8/ÏûÔª×Ó.txt");
     file_R.open("R.txt");
     if (file_R.fail()) {
         cout << "wow" << endl;
     }
     while (file_R.getline(buffer, sizeof(buffer))) {
-        // æ¯ä¸€æ¬¡è¯»å…¥ä¸€è¡Œï¼Œæ¶ˆå…ƒå­æ¯32ä½è®°å½•è¿›ä¸€ä¸ªintä¸­
+        // Ã¿Ò»´Î¶ÁÈëÒ»ĞĞ£¬ÏûÔª×ÓÃ¿32Î»¼ÇÂ¼½øÒ»¸öintÖĞ
         int bit;
         stringstream line(buffer);
         int first_in = 1;
 
-        // æ¶ˆå…ƒå­çš„ç´¢å¼•æ˜¯å…¶é¦–é¡¹
+        // ÏûÔª×ÓµÄË÷ÒıÊÇÆäÊ×Ïî
         int index;
         while (line >> bit) {
             if (first_in) {
@@ -183,31 +169,31 @@ int main() {
                 index = bit;
             }
 
-            // å°†ç¬¬indexè¡Œçš„æ¶ˆå…ƒå­bitsetå¯¹åº”ä½ ç½®1
+            // ½«µÚindexĞĞµÄÏûÔª×Óbitset¶ÔÓ¦Î» ÖÃ1
             R[index][bit] = 1;
         }
     }
     file_R.close();
 //--------------------------------
-    // è¯»å…¥è¢«æ¶ˆå…ƒè¡Œ
+    // ¶ÁÈë±»ÏûÔªĞĞ
     ifstream file_E;
-    // file_E.open("/home/data/Groebner/æµ‹è¯•æ ·ä¾‹1 çŸ©é˜µåˆ—æ•°130ï¼Œéé›¶æ¶ˆå…ƒå­22ï¼Œè¢«æ¶ˆå…ƒè¡Œ8/è¢«æ¶ˆå…ƒè¡Œ.txt");
+    // file_E.open("/home/data/Groebner/²âÊÔÑùÀı1 ¾ØÕóÁĞÊı130£¬·ÇÁãÏûÔª×Ó22£¬±»ÏûÔªĞĞ8/±»ÏûÔªĞĞ.txt");
     file_E.open("E.txt");
 
-    // è¢«æ¶ˆå…ƒè¡Œçš„ç´¢å¼•å°±æ˜¯è¯»å…¥çš„è¡Œæ•°
+    // ±»ÏûÔªĞĞµÄË÷Òı¾ÍÊÇ¶ÁÈëµÄĞĞÊı
     int index = 0;
     while (file_E.getline(buffer, sizeof(buffer))) {
-        // æ¯ä¸€æ¬¡è¯»å…¥ä¸€è¡Œï¼Œæ¶ˆå…ƒå­æ¯32ä½è®°å½•è¿›ä¸€ä¸ªintä¸­
+        // Ã¿Ò»´Î¶ÁÈëÒ»ĞĞ£¬ÏûÔª×ÓÃ¿32Î»¼ÇÂ¼½øÒ»¸öintÖĞ
         int bit;
         stringstream line(buffer);
         while (line >> bit) {
-            // å°†ç¬¬indexè¡Œçš„æ¶ˆå…ƒå­bitsetå¯¹åº”ä½ ç½®1
+            // ½«µÚindexĞĞµÄÏûÔª×Óbitset¶ÔÓ¦Î» ÖÃ1
             E[index][bit] = 1;
         }
         index++;
     }
 //--------------------------------
-    // ä½¿ç”¨C++11çš„chronoåº“æ¥è®¡æ—¶
+    // Ê¹ÓÃC++11µÄchrono¿âÀ´¼ÆÊ±
     auto start = chrono::high_resolution_clock::now();
     solve();
     auto end = chrono::high_resolution_clock::now();

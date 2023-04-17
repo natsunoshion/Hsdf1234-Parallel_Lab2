@@ -37,34 +37,24 @@ void solve() {
         }
         vector<pair<int, int>> records;
         // 记录这5列的消元操作
-        while (true) {
-            bool is_end = 1;
-            for (int i=0; i<MAXN; i++) {
-                if (lp(E_temp[i]) >= n-4) {
-                    is_end = 0;
-                    break;
+        // 遍历被消元行
+        for (int i=0; i<5; i++) {
+            bool is_eliminated = 0;
+            // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
+            // 遍历消元子的行
+            for (int j=4; j>=0; j--) {
+                if (lp(E_temp[i]) == j) {
+                    E_temp[i] ^= R_temp[j];
+                    is_eliminated = 1;
+                    records.emplace_back(i, j+n-4);  // 记录
                 }
             }
-            if (is_end) {
-                break;
-            }
-            // 遍历被消元行
-            for (int i=0; i<5; i++) {
-                bool is_eliminated = 0;
-                // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
-                // 遍历消元子的行
-                for (int j=0; j<5; j++) {
-                    if (lp(E_temp[i]) == j) {
-                        E_temp[i] ^= R_temp[j];
-                        is_eliminated = 1;
-                        records.emplace_back(i, j+n-4);  // 记录
-                    }
-                }
-                if (!is_eliminated) {
-                    // 升格
+            if (!is_eliminated) {
+                // 不为空行则升格，为空行则舍去
+                if (!E_temp[i].none()) {
                     R[lp(E_temp[i])] = E[i];
-                    break;
                 }
+                break;
             }
         }
         // 接下来，对这n列进行并行计算，按照records中的记录进行多线程操作（由于刚刚没有存回去，所以这里剩下有n列）
@@ -122,34 +112,26 @@ void solve() {
     bitset<5> R_temp[MAXM];
     bitset<5> E_temp[MAXM];
     for (int i=0; i<MAXM; i++) {
-        R_temp[i] = bitset<5>((R[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
-        E_temp[i] = bitset<5>((E[i].to_ulong()<<(MAXN-n-1)) >> (MAXN-n-1));
+        R_temp[i] = bitset<5>(((R[i]<<(MAXN-n-1)) >> (MAXN-n-1)).to_ulong());
+        E_temp[i] = bitset<5>(((E[i]<<(MAXN-n-1)) >> (MAXN-n-1)).to_ulong());
     }
-    while (true) {
-        bool is_end = 1;
-        for (int i=0; i<MAXM; i++) {
-            if (lp(E_temp[i]) >= 0) {
-                is_end = 0;
-                break;
+    // 遍历被消元行
+    for (int i=0; i<5; i++) {
+        bool is_eliminated = 0;
+        // 消元，并记录操作，这里记录使用vector<pair<int, int>>存储，第一个int记录被消元行操作的行号，第二个int记录首项所在的列号
+        // 遍历消元子的行
+        for (int j=4; j>=0; j--) {
+            if (lp(E_temp[i]) == j) {
+                E_temp[i] ^= R_temp[j];
+                is_eliminated = 1;
             }
         }
-        if (is_end) {
-            break;
-        }
-        // 遍历被消元行
-        for (int i=0; i<5; i++) {
-            bool is_eliminated = 0;
-            // 遍历消元子的行
-            for (int j=0; j<5; j++) {
-                if (lp(E_temp[i]) == j) {
-                    E_temp[i] ^= R_temp[j];
-                    is_eliminated = 1;
-                }
-            }
-            if (!is_eliminated) {
+        if (!is_eliminated) {
+            // 不为空行则升格，为空行则舍去
+            if (!E_temp[i].none()) {
                 R[lp(E_temp[i])] = E[i];
-                break;
             }
+            break;
         }
     }
     // 存储回去
