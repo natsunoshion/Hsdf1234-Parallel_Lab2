@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include <arm_neon.h>
+#include <immintrin.h>
 
 using namespace std;
 
@@ -72,35 +72,83 @@ void solve() {
             int row = pair.first;
             int leader = pair.second;
             int m;
-            for (m=n; m>=19; m-=20) {
+            for (m=n; m>=79; m-=80) {
                 // 被消元行
                 bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
                 bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
                 bitset<5> a3_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
                 bitset<5> a4_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> a5_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
+                bitset<5> a6_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
+                bitset<5> a7_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
+                bitset<5> a8_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
+                bitset<5> a9_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-40)-1)) >> (MAXN-5));
+                bitset<5> a10_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-45)-1)) >> (MAXN-5));
+                bitset<5> a11_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-50)-1)) >> (MAXN-5));
+                bitset<5> a12_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-55)-1)) >> (MAXN-5));
+                bitset<5> a13_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-60)-1)) >> (MAXN-5));
+                bitset<5> a14_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-65)-1)) >> (MAXN-5));
+                bitset<5> a15_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-70)-1)) >> (MAXN-5));
+                bitset<5> a16_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-75)-1)) >> (MAXN-5));
                 // 消元子
                 bitset<5> b1_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
                 bitset<5> b2_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
                 bitset<5> b3_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
                 bitset<5> b4_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> b5_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
+                bitset<5> b6_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
+                bitset<5> b7_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
+                bitset<5> b8_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
+                bitset<5> b9_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-40)-1)) >> (MAXN-5));
+                bitset<5> b10_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-45)-1)) >> (MAXN-5));
+                bitset<5> b11_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-50)-1)) >> (MAXN-5));
+                bitset<5> b12_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-55)-1)) >> (MAXN-5));
+                bitset<5> b13_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-60)-1)) >> (MAXN-5));
+                bitset<5> b14_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-65)-1)) >> (MAXN-5));
+                bitset<5> b15_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-70)-1)) >> (MAXN-5));
+                bitset<5> b16_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-75)-1)) >> (MAXN-5));
                 // 形成整数，构成neon向量
                 int a1 = a1_bit.to_ulong();
                 int a2 = a2_bit.to_ulong();
                 int a3 = a3_bit.to_ulong();
                 int a4 = a4_bit.to_ulong();
+                int a5 = a5_bit.to_ulong();
+                int a6 = a6_bit.to_ulong();
+                int a7 = a7_bit.to_ulong();
+                int a8 = a8_bit.to_ulong();
+                int a9 = a9_bit.to_ulong();
+                int a10 = a10_bit.to_ulong();
+                int a11 = a11_bit.to_ulong();
+                int a12 = a12_bit.to_ulong();
+                int a13 = a13_bit.to_ulong();
+                int a14 = a14_bit.to_ulong();
+                int a15 = a15_bit.to_ulong();
+                int a16 = a16_bit.to_ulong();
                 int b1 = b1_bit.to_ulong();
                 int b2 = b2_bit.to_ulong();
                 int b3 = b3_bit.to_ulong();
                 int b4 = b4_bit.to_ulong();
-                int arr_a[4] = {a1, a2, a3, a4};
-                int arr_b[4] = {b1, b2, b3, b4};
-                uint32x4_t va = vld1q_u32(arr_a);
-                uint32x4_t vb = vld1q_u32(arr_b);
-                va = veroq_u32(va, vb);  // 异或
-                vst1q_u32(arr_a, va);
+                int b5 = b5_bit.to_ulong();
+                int b6 = b6_bit.to_ulong();
+                int b7 = b7_bit.to_ulong();
+                int b8 = b8_bit.to_ulong();
+                int b9 = b9_bit.to_ulong();
+                int b10 = b10_bit.to_ulong();
+                int b11 = b11_bit.to_ulong();
+                int b12 = b12_bit.to_ulong();
+                int b13 = b13_bit.to_ulong();
+                int b14 = b14_bit.to_ulong();
+                int b15 = b15_bit.to_ulong();
+                int b16 = b16_bit.to_ulong();
+                int arr_a[16] = {a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16};
+                int arr_b[16] = {b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16};
+                __m512i_u va = _mm512_set_epi32(a16, a15, a14, a13, a12, a11, a10, a9, a8, a7, a6, a5, a4, a3, a2, a1);
+                __m512i_u vb = _mm512_set_epi32(b16, b15, b14, b13, b12, b11, b10, b9, b8, b7, b6, b5, b4, b3, b2, b1);
+                va = _mm512_xor_si512(va, vb);  // 异或
+                _mm512_storeu_si512((__m256i*)arr_a, va);  // 存回去
                 // 存储回被消元行的位图，按arr_a[i]的5个位进行置位操作
                 // 外层循环遍历arr_a数组，内存循环遍历arr_a[i]的位数
-                for (int i=0; i<4; i++) {
+                for (int i=0; i<16; i++) {
                     for (int j=0; j<5; j++) {
                         E[row].set(m-j, arr_a[i] & 0x1);
                         arr_a[i] >>= 1;

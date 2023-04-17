@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include <arm_neon.h>
+#include <nmmintrin.h>
 
 using namespace std;
 
@@ -94,10 +94,10 @@ void solve() {
                 int b4 = b4_bit.to_ulong();
                 int arr_a[4] = {a1, a2, a3, a4};
                 int arr_b[4] = {b1, b2, b3, b4};
-                uint32x4_t va = vld1q_u32(arr_a);
-                uint32x4_t vb = vld1q_u32(arr_b);
-                va = veroq_u32(va, vb);  // 异或
-                vst1q_u32(arr_a, va);
+                __m128i_u va = _mm_set_epi32(a4, a3, a2, a1);
+                __m128i_u vb = _mm_set_epi32(b4, b3, b2, b1);
+                va = _mm_xor_si128(va, vb);  // 异或
+                _mm_storeu_si128((__m128i*)arr_a, va);  // 存回去
                 // 存储回被消元行的位图，按arr_a[i]的5个位进行置位操作
                 // 外层循环遍历arr_a数组，内存循环遍历arr_a[i]的位数
                 for (int i=0; i<4; i++) {

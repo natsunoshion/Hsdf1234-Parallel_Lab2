@@ -99,17 +99,17 @@ int main() {
     auto diff = chrono::duration_cast<chrono::duration<double, milli>>(end - start);
     cout << diff.count() << "ms" << endl;
 //--------------------------------
-    // // 验证结果正确性
-    // for (int i=0; i<1000; i++) {
-    //     if (!E[i].none()) {
-    //         // cout << i << ':';
-    //         for (int j=129; j>=0; j--) {
-    //             if (E[i][j] == 1) {
-    //                 cout << j << ' ';
-    //             }
-    //         }
-    //         cout << endl;
-    //     }
-    // }
+    // 验证结果正确性
+    for (int i=0; i<1000; i++) {
+        if (!E[i].none()) {
+            // cout << i << ':';
+            for (int j=129; j>=0; j--) {
+                if (E[i][j] == 1) {
+                    cout << j << ' ';
+                }
+            }
+            cout << endl;
+        }
+    }
     return 0;
 }

@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include <arm_neon.h>
+#include <immintrin.h>
 
 using namespace std;
 
@@ -72,35 +72,51 @@ void solve() {
             int row = pair.first;
             int leader = pair.second;
             int m;
-            for (m=n; m>=19; m-=20) {
+            for (m=n; m>=39; m-=40) {
                 // 被消元行
                 bitset<5> a1_bit = bitset<5>((E[row].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
                 bitset<5> a2_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
                 bitset<5> a3_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
                 bitset<5> a4_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> a5_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
+                bitset<5> a6_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
+                bitset<5> a7_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
+                bitset<5> a8_bit = bitset<5>((E[row].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
                 // 消元子
                 bitset<5> b1_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-m-1)) >> (MAXN-5));
                 bitset<5> b2_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-5)-1)) >> (MAXN-5));
                 bitset<5> b3_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-10)-1)) >> (MAXN-5));
                 bitset<5> b4_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-15)-1)) >> (MAXN-5));
+                bitset<5> b5_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-20)-1)) >> (MAXN-5));
+                bitset<5> b6_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-25)-1)) >> (MAXN-5));
+                bitset<5> b7_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-30)-1)) >> (MAXN-5));
+                bitset<5> b8_bit = bitset<5>((R[leader].to_ulong()<<(MAXN-(m-35)-1)) >> (MAXN-5));
                 // 形成整数，构成neon向量
                 int a1 = a1_bit.to_ulong();
                 int a2 = a2_bit.to_ulong();
                 int a3 = a3_bit.to_ulong();
                 int a4 = a4_bit.to_ulong();
+                int a5 = a5_bit.to_ulong();
+                int a6 = a6_bit.to_ulong();
+                int a7 = a7_bit.to_ulong();
+                int a8 = a8_bit.to_ulong();
                 int b1 = b1_bit.to_ulong();
                 int b2 = b2_bit.to_ulong();
                 int b3 = b3_bit.to_ulong();
                 int b4 = b4_bit.to_ulong();
-                int arr_a[4] = {a1, a2, a3, a4};
-                int arr_b[4] = {b1, b2, b3, b4};
-                uint32x4_t va = vld1q_u32(arr_a);
-                uint32x4_t vb = vld1q_u32(arr_b);
-                va = veroq_u32(va, vb);  // 异或
-                vst1q_u32(arr_a, va);
+                int b5 = b5_bit.to_ulong();
+                int b6 = b6_bit.to_ulong();
+                int b7 = b7_bit.to_ulong();
+                int b8 = b8_bit.to_ulong();
+                int arr_a[8] = {a1, a2, a3, a4, a5, a6, a7, a8};
+                int arr_b[8] = {b1, b2, b3, b4, b5, b6, b7, b8};
+                __m256i_u va = _mm256_set_epi32(a8, a7, a6, a5, a4, a3, a2, a1);
+                __m256i_u vb = _mm256_set_epi32(b8, b7, b6, b5, b4, b3, b2, b1);
+                va = _mm256_xor_si256(va, vb);  // 异或
+                _mm256_storeu_si256((__m256i*)arr_a, va);  // 存回去
                 // 存储回被消元行的位图，按arr_a[i]的5个位进行置位操作
                 // 外层循环遍历arr_a数组，内存循环遍历arr_a[i]的位数
-                for (int i=0; i<4; i++) {
+                for (int i=0; i<8; i++) {
                     for (int j=0; j<5; j++) {
                         E[row].set(m-j, arr_a[i] & 0x1);
                         arr_a[i] >>= 1;
