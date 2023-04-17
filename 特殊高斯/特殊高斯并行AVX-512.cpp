@@ -58,7 +58,7 @@ void solve() {
             }
         }
         // 接下来，对这n列进行并行计算，按照records中的记录进行多线程操作（由于刚刚没有存回去，所以这里剩下有n列）
-        // 每4段一组进行并行化，不断从records中取列
+        // 每16段一组进行并行化，不断从records中取列
         for (auto pair : records) {
             int row = pair.first;
             int leader = pair.second;
